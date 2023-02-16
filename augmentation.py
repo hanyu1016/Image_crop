@@ -26,15 +26,27 @@ dst = cv2.convertScaleAbs(gray_lap) # 轉回uint8
 cv2.imshow('test',dst)
 cv2.waitKey(0)
 
-contours, hierarchy = cv2.findContours(dst, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+contours, hierarchy = cv2.findContours(dst, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+
+mx = (0,0,0,0)      # biggest bounding box so far
+mx_area = 0
+for cont in contours:
+    x,y,w,h = cv2.boundingRect(cont)
+    area = w*h
+    if area > mx_area:
+        mx = x,y,w,h
+        mx_area = area
+x,y,w,h = mx
+
+
 
 # cnt =contours[1]
-bounding_boxes = [cv2.boundingRect(cnt) for cnt in contours]
-for bbox in bounding_boxes:
-  [x,y,w,h] = bbox
-  # cv2.rectangle(img_RGB, (x, y), (x+w, y+h), (0, 0, 225), 0)
-  cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 225), 0)
-
+# bounding_boxes = [cv2.boundingRect(cnt) for cnt in contours]
+# for bbox in bounding_boxes:
+#   [x,y,w,h] = bbox
+#   # cv2.rectangle(img_RGB, (x, y), (x+w, y+h), (0, 0, 225), 0)
+#   cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 225), 0)
+cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 225), 0)
 
 cv2.imshow('ROI',img)
 cv2.waitKey(0)
@@ -42,7 +54,7 @@ cv2.waitKey(0)
 # cropped = img_RGB[y+1:y+h,x+1:x+w]
 cropped = img_RGB[y+1:y+h,x+1:x+w]
 
-
+   
 cv2.imshow('cropped', cropped)
 key = cv2.waitKey(0)
 # 按空白鍵
